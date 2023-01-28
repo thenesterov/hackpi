@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "hackpi"
+version = "0.1.0"
+description = "HackPi - is a library for the FastAPI framework that adds additional functionality that simplifies development."
+authors = ["thenesterov <thenesterov@proton.me>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.89.1"
+sqlalchemy = "^2.0.0"
+pydantic = "^1.10.4"
+
+[tool.poetry.group.dev.dependencies]
+uvicorn = "^0.20.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -5,6 +5,7 @@ description = "HackPi - is a library for the FastAPI framework that adds additio
 authors = ["thenesterov <thenesterov@proton.me>"]
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/thenesterov/hackpi"
 
 [tool.poetry.dependencies]
 python = "^3.10"

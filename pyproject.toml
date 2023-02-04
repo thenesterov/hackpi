@@ -12,6 +12,7 @@ python = "^3.10"
 fastapi = "^0.89.1"
 sqlalchemy = "^2.0.0"
 pydantic = "^1.10.4"
+python-jose = "^3.3.0"
 
 [tool.poetry.group.dev.dependencies]
 uvicorn = "^0.20.0"

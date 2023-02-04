@@ -5,9 +5,6 @@ HackPi - is a library for the FastAPI framework that adds additional functionali
 ## Introduction
 ### Features:
 - Генерация endpoints по моделям SQLAlchemy и Pydantic
-- Самая простая генерация JWT-токенов
-- Отправка писем с кодом активации/восстановления на почту
-- Двухфакторная аутентификация используя TOTP
 - Готовые методы регистрации, авторизации
 - Система ролей с возможностью ограничения доступа
 

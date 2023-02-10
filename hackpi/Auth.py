@@ -48,7 +48,10 @@ class Auth:
             else:
                 return HTTPException(status_code=401, detail='Invalid credentials.')
 
-        # Get all users
+        @self.__router.get('/get_users')
+        def get_users(session=Depends(self.__database.get_session)):
+            return  session.query(self.__model).all()
+
         # Get user by id\username
         # Update userinfo
         # Delete user

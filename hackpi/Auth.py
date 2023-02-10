@@ -6,11 +6,12 @@ from hackpi import Database
 from hackpi.Database import Base
 from hackpi.JWT import JWT
 
+class AbstractUser:
+    id = Column(Integer, primary_key=True)
 
-class UserModel(Base):
+class UserModel(Base, AbstractUser):
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True)
     username = Column(String, unique=True)
     password = Column(String)
 
@@ -32,6 +33,7 @@ class Auth:
 
         @self.__router.post('/sign-up')
         def sign_up(user: self.__schema, session=Depends(self.__database.get_session)):
+            # check if user is exist
             session.add(self.__model(
                 **user.__dict__  # TODO: add hash
             ))
@@ -50,9 +52,13 @@ class Auth:
 
         @self.__router.get('/get_users')
         def get_users(session=Depends(self.__database.get_session)):
-            return  session.query(self.__model).all()
+            return session.query(self.__model).all()
 
-        # Get user by id\username
+        @self.__router.get('get_user_by_id')
+        def get_user_by_id(id: int, session=Depends(self.__database.get_session)):
+            # check if id is exist
+            return session.query(self.__model).filter(self.__model.id == id).one()
+
         # Update userinfo
         # Delete user
 

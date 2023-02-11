@@ -1,13 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
+from starlette.responses import JSONResponse
 
 from hackpi import Database
 from hackpi.Database import Base
 from hackpi.JWT import JWT
 
+
 class AbstractUser:
     id = Column(Integer, primary_key=True)
+
 
 class UserModel(Base, AbstractUser):
     __tablename__ = 'users'
@@ -54,12 +57,19 @@ class Auth:
         def get_users(session=Depends(self.__database.get_session)):
             return session.query(self.__model).all()
 
-        @self.__router.get('get_user_by_id')
+        @self.__router.get('/get_user_by_id')
         def get_user_by_id(id: int, session=Depends(self.__database.get_session)):
             # check if id is exist
             return session.query(self.__model).filter(self.__model.id == id).one()
 
-        # Update userinfo
+        @self.__router.put('/userinfo_update')
+        def userinfo_update(id: int, userinfo: self.__schema, session=Depends(self.__database.get_session)):
+            session.query(self.__model).filter(self.__model.id == id).update(userinfo.__dict__)
+            session.commit()
+
+            return JSONResponse(content={'message': 'The user has been updated'}, status_code=204)
+
+
         # Delete user
 
     def __call__(self):

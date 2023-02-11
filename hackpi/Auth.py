@@ -69,8 +69,12 @@ class Auth:
 
             return JSONResponse(content={'message': 'The user has been updated'}, status_code=204)
 
+        @self.__router.delete('/user_delete')
+        def user_delete(id: int, session=Depends(self.__database.get_session)):
+            session.query(self.__model).filter(self.__model.id == id).delete()
+            session.commit()
 
-        # Delete user
+            return JSONResponse(content={'message': 'The user has been deleted'}, status_code=200)
 
     def __call__(self):
         return self.__router

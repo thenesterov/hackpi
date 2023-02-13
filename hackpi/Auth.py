@@ -53,30 +53,23 @@ class Auth:
             else:
                 return HTTPException(status_code=401, detail='Invalid credentials.')
 
-        @self.__router.post('/sign-in')
-        def sign_in(user: self.__schema, session=Depends(self.__database.get_session)):
-            if session.query(self.__model).filter(self.__model.username == user.username).one().password == user.password:
-                return jwt.create({'username': user.username})
-            else:
-                return HTTPException(status_code=401, detail='Invalid credentials.')
-
-        @self.__router.get('/get_users')
+        @self.__router.get('/get-users')
         def get_users(session=Depends(self.__database.get_session)):
             return session.query(self.__model).all()
 
-        @self.__router.get('/get_user_by_id')
+        @self.__router.get('/get-user-by-id')
         def get_user_by_id(id: int, session=Depends(self.__database.get_session)):
             # check if id is exist
             return session.query(self.__model).filter(self.__model.id == id).one()
 
-        @self.__router.put('/userinfo_update')
+        @self.__router.put('/userinfo-update')
         def userinfo_update(id: int, userinfo: self.__schema, session=Depends(self.__database.get_session)):
             session.query(self.__model).filter(self.__model.id == id).update(userinfo.__dict__)
             session.commit()
 
             return JSONResponse(content={'message': 'The user has been updated'}, status_code=204)
 
-        @self.__router.delete('/user_delete')
+        @self.__router.delete('/user-delete')
         def user_delete(id: int, session=Depends(self.__database.get_session)):
             session.query(self.__model).filter(self.__model.id == id).delete()
             session.commit()

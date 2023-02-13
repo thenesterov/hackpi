@@ -85,4 +85,29 @@ router = Router(db, UserModel, UserSchema)
 app.include_router(router.get_router())
 ```
 
+## Регистрация и авторизация
+Если вы хотите добавить в свое приложение регистрацию и авторизацию, для этого существует класс `Auth`. Введите следующий код, чтобы добавить это в свое приложение:
+```python
+from fastapi import FastAPI
+from hackpi.Auth import Auth
+from hackpi.JWT import JWT
+from db import db
+
+app = FastAPI()
+
+jwt = JWT('secret')
+
+app.include_router(Auth(db, jwt)())
+```
+
+Это добавит следующие эндпоинты:
+- `/sign-up`
+- `/sign-in`
+- `/get-users`
+- `/get-user-by-id`
+- `/userinfo-update`
+- `/user-delete`
+
 Введя команду `uvicorn main:app --reload` в терминал, запустится бекенд. Можно перейти в документацию, и увидеть результат генерации эндпоинтов.
+
+⚠️ Библиотека не является полностью безопасной и не должна быть использована на реальных продакшен решениях!

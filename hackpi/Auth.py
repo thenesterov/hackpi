@@ -53,6 +53,13 @@ class Auth:
             else:
                 return HTTPException(status_code=401, detail='Invalid credentials.')
 
+        @self.__router.post('/sign-in')
+        def sign_in(user: self.__schema, session=Depends(self.__database.get_session)):
+            if session.query(self.__model).filter(self.__model.username == user.username).one().password == user.password:
+                return jwt.create({'username': user.username})
+            else:
+                return HTTPException(status_code=401, detail='Invalid credentials.')
+
         @self.__router.get('/get_users')
         def get_users(session=Depends(self.__database.get_session)):
             return session.query(self.__model).all()

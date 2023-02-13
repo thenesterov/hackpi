@@ -1,4 +1,5 @@
 # HackPi
+![logotype](docs/logo.svg)
 
 HackPi - is a library for the FastAPI framework that adds additional functionality that simplifies development. 
 

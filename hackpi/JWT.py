@@ -17,3 +17,6 @@ class JWT:
             return True if jwt.decode(token, self.__secret, algorithms=['HS256']) else False
         except JWTError:
             return False
+
+    def parse(self, token: str) -> dict:
+        return jwt.decode(token, self.__secret, algorithms=['HS256'])

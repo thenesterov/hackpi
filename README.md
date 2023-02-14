@@ -89,6 +89,7 @@ app.include_router(router.get_router())
 ## Регистрация и авторизация
 Если вы хотите добавить в свое приложение регистрацию и авторизацию, для этого существует класс `Auth`. Введите следующий код, чтобы добавить это в свое приложение:
 ```python
+# main.py
 from fastapi import FastAPI
 from hackpi.Auth import Auth
 from hackpi.JWT import JWT
@@ -108,6 +109,30 @@ app.include_router(Auth(db, jwt)())
 - `/get-user-by-id`
 - `/userinfo-update`
 - `/user-delete`
+
+## Ролевая система
+Чтобы к некоторым эндпоинтам доступ могло иметь только ограниченное количество пользователей, можно добавить ролевую систему:
+```python
+# main.py
+from fastapi import FastAPI
+from hackpi.Router import Router
+from hackpi.JWT import JWT
+from hackpi.Methods import Methods
+from hackpi.Roles import StandartRoles
+from models import User as UserModel
+from schemas import User as UserSchema
+from db import db
+
+app = FastAPI()
+
+jwt = JWT('secret')
+
+router = Router(db, UserModel, UserSchema, jwt, {
+    Methods.GET: [StandartRoles.MODER]
+})
+
+app.include_router(router.get_router())
+```
 
 Введя команду `uvicorn main:app --reload` в терминал, запустится бекенд. Можно перейти в документацию, и увидеть результат генерации эндпоинтов.
 

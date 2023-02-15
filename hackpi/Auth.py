@@ -4,14 +4,11 @@ from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from starlette.responses import JSONResponse
 
-from hackpi import Database
-from hackpi.Database import Base
-from hackpi.JWT import JWT
-from hackpi.Methods import Methods
-from hackpi.Roles import StandartRoles
+from hackpi import HackPi, Base, Methods, StandartRoles
 
 # move it to new file
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 class AbstractUser:
     id = Column(Integer, primary_key=True)
@@ -31,8 +28,8 @@ class UserSchema(BaseModel):
 
 
 class Auth:
-    def __init__(self, database: Database, jwt: JWT, model: Base = UserModel, schema: BaseModel = UserSchema, roles: dict[str, list[str]] = {}):
-        self.__database = database
+    def __init__(self, hp: HackPi, model: Base = UserModel, schema: BaseModel = UserSchema, roles: dict[str, list[str]] = {}):
+        self.__database = hp.db
         self.__model = model
         self.__schema = schema
 
@@ -48,28 +45,28 @@ class Auth:
             ))
             session.commit()
 
-            return jwt.create({'username': user.username, 'role': StandartRoles.USER})
+            return hp.jwt.create({'username': user.username, 'role': StandartRoles.USER})
 
         @self.__router.post('/sign-in')
         def sign_in(user: self.__schema, session=Depends(self.__database.get_session)):
             row = session.query(self.__model).filter(self.__model.username == user.username).one()
 
             if row.password == user.password:
-                return jwt.create({'username': user.username, 'role': row.role})
+                return hp.jwt.create({'username': user.username, 'role': row.role})
             else:
                 return HTTPException(status_code=401, detail='Invalid credentials.')
 
         if roles.get(Methods.GET):
             @self.__router.get('/get-users')
             def get_users(session=Depends(self.__database.get_session), token: str = Depends(oauth2_scheme)):
-                if jwt.parse(token).get('role') in roles[Methods.GET]:
+                if hp.jwt.parse(token).get('role') in roles[Methods.GET]:
                     return session.query(self.__model).all()
                 else:
                     return HTTPException(status_code=401, detail='Not permitted')
 
             @self.__router.get('/get-user-by-id')
             def get_user_by_id(id: int, session=Depends(self.__database.get_session), token: str = Depends(oauth2_scheme)):
-                if jwt.parse(token).get('role') in roles[Methods.GET]:
+                if hp.jwt.parse(token).get('role') in roles[Methods.GET]:
                     # check if id is exist
                     return session.query(self.__model).filter(self.__model.id == id).one()
                 else:
@@ -78,7 +75,7 @@ class Auth:
         if roles.get(Methods.PUT):
             @self.__router.put('/userinfo-update')
             def userinfo_update(id: int, userinfo: self.__schema, session=Depends(self.__database.get_session), token: str = Depends(oauth2_scheme)):
-                if jwt.parse(token).get('role') in roles[Methods.PUT]:
+                if hp.jwt.parse(token).get('role') in roles[Methods.PUT]:
                     session.query(self.__model).filter(self.__model.id == id).update(userinfo.__dict__)
                     session.commit()
 
@@ -89,7 +86,7 @@ class Auth:
         if roles.get(Methods.DELETE):
             @self.__router.delete('/user-delete')
             def user_delete(id: int, session=Depends(self.__database.get_session), token: str = Depends(oauth2_scheme)):
-                if jwt.parse(token).get('role') in roles[Methods.DELETE]:
+                if hp.jwt.parse(token).get('role') in roles[Methods.DELETE]:
                     session.query(self.__model).filter(self.__model.id == id).delete()
                     session.commit()
 

@@ -2,20 +2,18 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 
-from hackpi.JWT import JWT
-from hackpi.Methods import Methods
-from hackpi.Database import Base, Database
+from hackpi import HackPi, Methods, Base
 
 # move it to new file
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 class Router:
-    def __init__(self, database: Database, model: Base, schema: BaseModel, jwt: JWT, roles: dict[str, list[str]] = {}):
-        self.__database = database
+    def __init__(self, hp: HackPi, model: Base, schema: BaseModel, roles: dict[str, list[str]] = {}):
+        self.__database = hp.db
         self.__model = model
         self.__schema = schema
-        self.__jwt = jwt
+        self.__jwt = hp.db
         self.__roles = roles
 
         self.__router = APIRouter(prefix=f'/{self.__model.__name__.lower()}', tags=[self.__model.__name__.lower()])

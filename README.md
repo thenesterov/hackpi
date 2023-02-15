@@ -30,7 +30,7 @@ pip3 list
 Для подключения к базе данных используется класс `Database`. При содании объекта этого класса, нужно передать в конструктор расположение SQLite3 базы данных. Пока что HackPi может работать только с этой базой данных.
 ```python
 # db.py
-from hackpi.Database import Database
+from hackpi import Database
 
 db = Database('sqlite:///database.sqlite3')
 ```
@@ -42,7 +42,7 @@ db = Database('sqlite:///database.sqlite3')
 
 ```python
 # models.py
-from hackpi.Database import Base
+from hackpi import Base
 from sqlalchemy import Column, Integer, String
 from db import db
 
@@ -74,14 +74,16 @@ class User(BaseModel):
 ```python
 # main.py
 from fastapi import FastAPI
-from hackpi.Router import Router
+from hackpi import HackPi, Router
 from models import User as UserModel
 from schemas import User as UserSchema
 from db import db
 
 app = FastAPI()
 
-router = Router(db, UserModel, UserSchema)
+hp = HackPi(db=db)
+
+router = Router(hp, UserModel, UserSchema)
 
 app.include_router(router.get_router())
 ```
@@ -91,15 +93,16 @@ app.include_router(router.get_router())
 ```python
 # main.py
 from fastapi import FastAPI
-from hackpi.Auth import Auth
-from hackpi.JWT import JWT
+from hackpi.Auth import HackPi, Auth, JWT
 from db import db
 
 app = FastAPI()
 
 jwt = JWT('secret')
 
-app.include_router(Auth(db, jwt)())
+hp = HackPi(db=db, jwt=jwt)
+
+app.include_router(Auth(hp)())
 ```
 
 Это добавит следующие эндпоинты:
@@ -115,10 +118,7 @@ app.include_router(Auth(db, jwt)())
 ```python
 # main.py
 from fastapi import FastAPI
-from hackpi.Router import Router
-from hackpi.JWT import JWT
-from hackpi.Methods import Methods
-from hackpi.Roles import StandartRoles
+from hackpi import HackPi, Router, JWT, Methods, StandartRoles
 from models import User as UserModel
 from schemas import User as UserSchema
 from db import db
@@ -127,7 +127,9 @@ app = FastAPI()
 
 jwt = JWT('secret')
 
-router = Router(db, UserModel, UserSchema, jwt, {
+hp = HackPi(db=db, jwt=jwt)
+
+router = Router(hp, UserModel, UserSchema, {
     Methods.GET: [StandartRoles.MODER]
 })
 

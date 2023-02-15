@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hackpi"
-version = "0.1.1"
+version = "0.1.2"
 description = "HackPi - is a library for the FastAPI framework that adds additional functionality that simplifies development."
 authors = ["thenesterov <thenesterov@proton.me>"]
 license = "MIT"

@@ -1,7 +1,8 @@
 import random
 import string
 
-from hackpi import Database, JWT
+from hackpi.Database import Database
+from hackpi.JWT import JWT
 
 
 class HackPi:

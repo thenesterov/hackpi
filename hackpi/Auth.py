@@ -4,7 +4,10 @@ from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from starlette.responses import JSONResponse
 
-from hackpi import HackPi, Base, Methods, StandartRoles
+from hackpi.HackPi import HackPi
+from hackpi.Database import Base
+from hackpi.Methods import Methods
+from hackpi.Roles import StandartRoles
 
 # move it to new file
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")

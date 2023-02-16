@@ -1,15 +1,13 @@
-from Router import Router as Router
+from .Router import Router
 
-from Database import Database as Database
-from Database import Base as Base
+from .Database import Database, Base
 
-from Auth import Auth as Auth
+from .Auth import Auth
 
-from JWT import JWT as JWT
+from .JWT import JWT
 
-from Methods import Methods as Methods
+from .Methods import Methods
 
-from Roles import Roles as Roles
-from Roles import StandartRoles as StandartRoles
+from .Roles import Roles, StandartRoles
 
-from HackPi import HackPi as HackPi
+from .HackPi import HackPi
